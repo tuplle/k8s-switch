@@ -12,6 +12,8 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: 1.25
+      - name: Install dependencies
+        run: make install-deps
       - name: Lint
         run: make lint
       - name: Build
