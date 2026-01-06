@@ -8,7 +8,7 @@ all: clean install-deps build
 ## install-deps: Get dependencies
 install-deps:
 	@echo "Installing dependencies"
-	@go get -u
+	@go get -u .
 
 ## build: Build the binary
 build:
@@ -25,3 +25,10 @@ clean:
 install:
 	@echo "Installing"
 	@go install github.com/tuplle/k8s-switch
+
+## lint: Lint and format project
+lint:
+	@echo "Linting"
+	@go vet ./...
+	@echo "Formatting"
+	@go fmt ./...
