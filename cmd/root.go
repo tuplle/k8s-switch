@@ -25,10 +25,12 @@ var rootCmd = &cobra.Command{
 It lists files from your ~/.kube/conf.d directory, allows you to select one
 via an interactive prompt, and automatically updates your main ~/.kube/config.
 
-Optionally, it can launch k9s directly using the selected configuration.`,
+Optionally, it can launch k9s directly using the selected configuration.
+Optionally, it can open logs in default browser with kubetail.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		k9s, _ := cmd.Flags().GetBool("k9s")
 		k9sOnly, _ := cmd.Flags().GetBool("k9s-only")
+		logs, _ := cmd.Flags().GetBool("logs")
 		configDir, _ := cmd.Flags().GetString("dir")
 		homedir, _ := os.UserHomeDir()
 		if configDir == "" {
@@ -39,6 +41,14 @@ Optionally, it can launch k9s directly using the selected configuration.`,
 		if err != nil {
 			panic(err)
 		}
+
+		filteredConfigs := make(map[string]string)
+		for name, path := range configs {
+			if filepath.Ext(name) == ".yaml" {
+				filteredConfigs[name] = path
+			}
+		}
+		configs = filteredConfigs
 
 		prompt := promptui.Select{
 			Label: "Select config",
@@ -67,6 +77,13 @@ Optionally, it can launch k9s directly using the selected configuration.`,
 				panic(err)
 			}
 		}
+
+		if logs {
+			err = runKubetail(configs[result])
+			if err != nil {
+				panic(err)
+			}
+		}
 	},
 }
 
@@ -90,9 +107,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.Flags().BoolP("k9s", "9", false, "launch k9s with selected config")
 	rootCmd.Flags().Bool("k9s-only", false, "launch k9s with selected config only")
+	rootCmd.Flags().Bool("logs", false, "open logs in default browser with kubetail")
 	rootCmd.Flags().StringP("dir", "d", "", "path to config.d directory")
 }
 
 func runK9s(kubeconfigPath string) error {
 	return internal.RunAnotherTUI("k9s", []string{"--kubeconfig", kubeconfigPath})
+}
+
+func runKubetail(s string) error {
+	return internal.RunAnotherTUI("kubetail", []string{"serve", "-c", s})
 }
