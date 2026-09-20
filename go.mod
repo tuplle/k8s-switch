@@ -1,6 +1,6 @@
 module github.com/tuplle/k8s-switch
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/manifoldco/promptui v0.9.0
@@ -11,5 +11,5 @@ require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 )
