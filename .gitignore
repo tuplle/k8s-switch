@@ -159,6 +159,7 @@ fabric.properties
 ### Example user template
 
 bin/
+dist/
 
 # IntelliJ project files
 .idea

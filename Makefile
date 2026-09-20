@@ -1,7 +1,7 @@
 BINARY_NAME=k8s-switch
 BUILD_DIR=bin
 
-.PHONY: all install-deps update-deps build clean test
+.PHONY: all install-deps update-deps build clean test snapshot
 
 all: clean install-deps test build
 
@@ -43,3 +43,8 @@ lint:
 	@go vet ./...
 	@echo "Formatting"
 	@go fmt ./...
+
+## snapshot: Build a local snapshot release with GoReleaser (no publish, no tag needed)
+snapshot:
+	@echo "Building snapshot release"
+	@goreleaser release --snapshot --clean --skip=publish

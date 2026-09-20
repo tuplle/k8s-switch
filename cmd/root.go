@@ -17,8 +17,10 @@ import (
 
 var verbose bool
 
-// Version is the released version of k8s-switch, set to match the git tag at release time.
-const Version = "1.0.0"
+// Version is the released version of k8s-switch. It is injected at build time via
+// -ldflags by GoReleaser (see .goreleaser.yaml) to match the git tag; local builds
+// (e.g. `make build`) report "dev".
+var Version = "dev"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

@@ -17,6 +17,12 @@ launch [k9s](https://k9scli.io/).
 
 ## Installation
 
+### Prebuilt Binaries
+
+Download the archive for your OS/architecture from the
+[Releases page](https://github.com/tuplle/k8s-switch/releases), extract it,
+and put the `k8s-switch` binary on your `PATH`. No Go toolchain required.
+
 ### From Source
 
 Ensure you have Go installed (version 1.25 or later).

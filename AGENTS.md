@@ -16,15 +16,17 @@ Module path: `github.com/tuplle/k8s-switch` (Go 1.25).
 - `main.go` — entry point, delegates to `cmd.Execute()`.
 - `cmd/root.go` — the single Cobra root command: flag definitions, the interactive
   selection flow, and thin wrappers (`runK9s`, `runKubetail`) that shell out to
-  external TUIs.
+  external TUIs. `cmd/root_test.go` covers it.
 - `internal/utils.go` — small, dependency-free helpers (`GetFilesFromDir`,
-  `CopyFile`, `RunAnotherTUI`) shared by `cmd`.
+  `FilterByExtension`, `CopyFile`, `RunAnotherTUI`) shared by `cmd`.
+  `internal/utils_test.go` covers it.
 - `bin/` — build output from `make build` (git-ignored, not source).
-- `.github/workflows/build-main.yml` — CI: installs deps, lints, builds on push to
-  `main`.
+- `.goreleaser.yaml` — cross-platform release config (see "Releases" below).
+- `.github/workflows/build-main.yml` — CI: installs deps, lints, tests, builds on
+  push and pull requests targeting `main`.
+- `.github/workflows/release.yml` — builds and publishes cross-platform binaries to
+  GitHub Releases via GoReleaser when a `v*` tag is pushed.
 - `.config/.git-pre-commit` — pre-commit hook source (`go fmt ./...`, `go vet ./...`).
-
-There are no other packages and no test files (`*_test.go`) in the repo currently.
 
 ## Build, lint, run
 
@@ -65,6 +67,21 @@ fail the build otherwise.
 - No third-party test or mocking framework is present — stdlib `testing` is the
   expected default if tests are added.
 
+## Releases
+
+`cmd.Version` is `var Version = "dev"` (`cmd/root.go`), not a hardcoded constant —
+GoReleaser injects the real version at build time via `-ldflags -X` (see
+`.goreleaser.yaml`), so local builds always report `dev`. To cut a release: update
+`CHANGELOG.md`, then tag `vX.Y.Z` and push the tag (a git operation left to the human
+maintainer, not performed automatically). Pushing the tag triggers
+`.github/workflows/release.yml`, which runs GoReleaser to cross-compile for
+linux/darwin/windows (amd64+arm64) and publish archives + checksums to GitHub
+Releases.
+
+To test the release pipeline locally without tagging or publishing:
+`make snapshot` (requires `goreleaser` installed:
+`go install github.com/goreleaser/goreleaser/v2@latest`).
+
 ## External dependencies at runtime
 
 The tool shells out to external binaries that are not Go dependencies: `k9s` and
@@ -74,7 +91,7 @@ exercises `runK9s`/`runKubetail`/`RunAnotherTUI` can't be tested there without t
 
 ## Git / PR notes
 
-- Default branch is `main`; CI (`build-main.yml`) only triggers on push to `main`,
-  there is no PR-triggered workflow currently.
+- Default branch is `main`; `build-main.yml` runs on push and pull requests targeting
+  `main`; `release.yml` runs separately on `v*` tag pushes.
 - `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` document human contributor process —
   worth checking if a change touches project process, licensing, or community docs.

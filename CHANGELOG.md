@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Cross-platform release pipeline: pushing a `v*` tag now builds
+  linux/darwin/windows (amd64+arm64) binaries via GoReleaser and publishes
+  them as GitHub Release archives with checksums, so users can install a
+  prebuilt binary without a Go toolchain.
+- `--version` now reports the exact released version on GoReleaser-built
+  binaries (injected at build time); local `make build` reports `dev`.
+
 ## [1.0.0] - 2026-09-20
 
 ### Added
