@@ -1,5 +1,10 @@
 # k8s-switch
 
+[![Build Main](https://github.com/tuplle/k8s-switch/actions/workflows/build-main.yml/badge.svg)](https://github.com/tuplle/k8s-switch/actions/workflows/build-main.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/tuplle/k8s-switch.svg)](https://pkg.go.dev/github.com/tuplle/k8s-switch)
+[![Latest Release](https://img.shields.io/github/v/release/tuplle/k8s-switch)](https://github.com/tuplle/k8s-switch/releases)
+[![License](https://img.shields.io/github/license/tuplle/k8s-switch)](LICENSE.txt)
+
 A lightweight CLI tool to quickly switch between multiple Kubernetes configurations and optionally
 launch [k9s](https://k9scli.io/).
 
@@ -62,6 +67,43 @@ k8s-switch
 ```shell script
 k8s-switch -9
 ```
+
+## Shell Completion
+
+k8s-switch supports shell completion for bash, zsh, fish, and PowerShell (via
+[Cobra](https://github.com/spf13/cobra)).
+
+**Bash:**
+
+```bash
+source <(k8s-switch completion bash)
+# or, to persist across sessions:
+k8s-switch completion bash > /etc/bash_completion.d/k8s-switch
+```
+
+**Zsh:**
+
+```bash
+source <(k8s-switch completion zsh)
+# or, to persist across sessions:
+k8s-switch completion zsh > "${fpath[1]}/_k8s-switch"
+```
+
+**Fish:**
+
+```bash
+k8s-switch completion fish | source
+# or, to persist across sessions:
+k8s-switch completion fish > ~/.config/fish/completions/k8s-switch.fish
+```
+
+**PowerShell:**
+
+```powershell
+k8s-switch completion powershell | Out-String | Invoke-Expression
+```
+
+Run `k8s-switch completion --help` for more details.
 
 ## License
 

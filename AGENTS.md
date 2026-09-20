@@ -34,16 +34,20 @@ Use the `Makefile` targets rather than raw `go` invocations where one exists:
 make build         # go build -> bin/k8s-switch
 make install       # go install github.com/tuplle/k8s-switch
 make lint          # go vet ./... && go fmt ./...
+make test          # go test ./...
 make clean         # remove bin/ and any stray binary
-make install-deps  # go get -u . (used in CI)
+make install-deps  # go mod download (used in CI; does NOT change dependency versions)
+make update-deps   # go get -u ./... && go mod tidy (deliberate dependency bump only)
 ```
 
-There is no test suite yet. If you add one, run it with `go test ./...` and prefer
-adding a `test` target to the Makefile alongside it rather than inventing a separate
-convention.
+`install-deps` must stay non-mutating (`go mod download`, not `go get -u`) — it's part of
+the normal build/test/release path and CI, so it must never change `go.mod`/`go.sum`.
+Bumping dependency versions is a separate, deliberate action via `make update-deps`,
+done in its own commit/PR, not as a side effect of building or releasing.
 
-Before committing, run `go fmt ./...` and `go vet ./...` (mirrors the pre-commit hook
-and CI's `make lint`) — CI will fail the build otherwise.
+Run `go test ./...` (or `make test`) and `go fmt ./...` / `go vet ./...` before
+committing (mirrors the pre-commit hook and CI's `make lint`/`make test`) — CI will
+fail the build otherwise.
 
 ## Conventions
 

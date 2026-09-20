@@ -18,6 +18,11 @@ func TestGetFilesFromDir(t *testing.T) {
 	if err := os.Mkdir(filepath.Join(dir, "subdir"), 0o755); err != nil {
 		t.Fatalf("failed to create fixture subdir: %v", err)
 	}
+	if runtime.GOOS != "windows" {
+		if err := os.Symlink(filepath.Join(dir, "a.yaml"), filepath.Join(dir, "link.yaml")); err != nil {
+			t.Fatalf("failed to create fixture symlink: %v", err)
+		}
+	}
 
 	files, err := GetFilesFromDir(dir)
 	if err != nil {
@@ -40,6 +45,9 @@ func TestGetFilesFromDir(t *testing.T) {
 
 	if _, ok := files["subdir"]; ok {
 		t.Errorf("expected subdirectories to be excluded, got %v", files)
+	}
+	if _, ok := files["link.yaml"]; ok {
+		t.Errorf("expected symlinks to be excluded, got %v", files)
 	}
 }
 
@@ -105,6 +113,16 @@ func TestCopyFile(t *testing.T) {
 	}
 	if string(got) != string(want) {
 		t.Errorf("expected destination content %q, got %q", want, got)
+	}
+
+	if runtime.GOOS != "windows" {
+		info, err := os.Stat(dst)
+		if err != nil {
+			t.Fatalf("failed to stat destination file: %v", err)
+		}
+		if perm := info.Mode().Perm(); perm != 0o600 {
+			t.Errorf("expected destination permissions 0600, got %o", perm)
+		}
 	}
 }
 

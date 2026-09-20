@@ -1,14 +1,20 @@
 BINARY_NAME=k8s-switch
 BUILD_DIR=bin
 
-.PHONY: all install-deps build clean test
+.PHONY: all install-deps update-deps build clean test
 
 all: clean install-deps test build
 
-## install-deps: Get dependencies
+## install-deps: Download dependencies pinned in go.mod/go.sum (does not change versions)
 install-deps:
 	@echo "Installing dependencies"
-	@go get -u .
+	@go mod download
+
+## update-deps: Upgrade dependencies to their latest versions (run deliberately, never as part of build/release)
+update-deps:
+	@echo "Updating dependencies"
+	@go get -u ./...
+	@go mod tidy
 
 ## test: Run the test suite
 test:

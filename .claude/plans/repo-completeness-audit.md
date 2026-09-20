@@ -4,78 +4,92 @@
 
 Audit of what's missing from `k8s-switch` (Go CLI, module
 `github.com/tuplle/k8s-switch`) to be a fully complete, professional public
-open-source tool repository. Reference/planning document only — findings are
-organized by priority so it's easy to decide what to act on later.
+open-source tool repository. Findings are organized by priority. Updated to
+track what's actually been implemented since the original audit.
 
-Current state at time of writing: 4 commits, no tags, single-file `cmd/` and
+Original state audited: 4 commits, no tags, single-file `cmd/` and
 `internal/` packages, CI that only builds on push to `main`.
 
-## Tier 1 — Baseline hygiene (what a repo needs before others can rely on it)
+Current state: Tier 1 is complete and released as `v1.0.0` (tag pushed,
+matches `origin/main`). Part of Tier 2 is done. A follow-up security audit
+also found and fixed several issues not in the original list (see bottom).
 
-- **No automated tests.** Zero `*_test.go` files anywhere; CI doesn't run
-  `go test`. `internal/utils.go` (file copy, dir listing, subprocess exec) and
-  the flag-filtering logic in `cmd/root.go` are both testable today.
-- **CI only triggers on `push: branches: [main]`.** No `pull_request` trigger,
-  so external contributions never get automatically linted/built before
-  merge. Single OS (`ubuntu-latest`), single Go version — no matrix.
-- **No tagged releases.** `git tag --list` is empty. `go install
-  github.com/tuplle/k8s-switch@latest` resolves to the latest commit on
-  `main`, not a semver release — fine for `go install` but not a real
-  "release" a user can pin to, and pkg.go.dev conventions expect tags.
-- **No CHANGELOG.md.** No way for a user to see what changed between
-  versions.
-- **No SECURITY.md.** No documented way to privately report a vulnerability.
+## Tier 1 — Baseline hygiene — ✅ DONE (released as v1.0.0)
+
+- [x] **Automated tests** — `internal/utils_test.go` and `cmd/root_test.go`
+  added (11 tests), covering file listing, extension filtering, config
+  copying, and subprocess execution. The inline YAML-filter logic in
+  `cmd/root.go` was extracted into `internal.FilterByExtension` to make it
+  testable.
+- [x] **CI trigger** — `build-main.yml` now also runs on `pull_request`
+  against `main` (previously push-to-main only), and runs `make test`
+  before `make build`. (Still single OS/Go-version, no matrix — left as-is,
+  not required for baseline.)
+- [x] **Tagged release** — `v1.0.0` tag created and pushed; `rootCmd.Version`
+  set to `"1.0.0"`, enabling `k8s-switch --version`.
+- [x] **CHANGELOG.md** — added, Keep a Changelog format.
+- [x] **SECURITY.md** — added, points to GitHub private vulnerability
+  reporting.
 
 ## Tier 2 — Release & contribution polish
 
-- **No release automation** (e.g. GoReleaser) — no prebuilt cross-platform
-  binaries (macOS/Linux/Windows), no Homebrew tap, no install script. Today
-  the only install path is `git clone && make install` (Go toolchain
-  required).
-- **No README badges** — build status, license, go report card, latest
-  release. README currently opens straight into the description.
-- **No GitHub issue templates or PR template** (`.github/ISSUE_TEMPLATE/`,
-  `PULL_REQUEST_TEMPLATE.md`) despite `CONTRIBUTING.md` inviting PRs/issues.
-- **No CODEOWNERS.**
-- **No Dependabot/Renovate config** — the two direct deps (`promptui`,
-  `cobra`) and four indirect ones won't get automated update PRs;
-  `make install-deps` runs `go get -u .` which mutates versions rather than
-  pinning them deliberately.
+- [ ] **No release automation** (e.g. GoReleaser) — still no prebuilt
+  cross-platform binaries, Homebrew tap, or install script. Only install
+  path today is `git clone && make install`.
+- [x] **README badges** — build status, pkg.go.dev, latest release, and
+  license badges added. (Go Report Card badge was proposed but removed by
+  the user.)
+- [x] **GitHub issue templates and PR template** — added
+  `.github/ISSUE_TEMPLATE/bug_report.md`, `feature_request.md`,
+  `config.yml` (links to CONTRIBUTING.md), and
+  `.github/PULL_REQUEST_TEMPLATE.md`.
+- [ ] **No CODEOWNERS.**
+- [~] **Dependabot/Renovate config** — still not added, so dependency
+  updates aren't automated via PRs. Partially addressed differently:
+  `make install-deps` no longer mutates versions (now `go mod download`);
+  a separate, deliberate `make update-deps` target
+  (`go get -u ./... && go mod tidy`) was added for intentional bumps.
 
-## Tier 3 — Deeper polish (nice-to-have, lower urgency)
+## Tier 3 — Deeper polish (nice-to-have, lower urgency) — not started
 
-- **Linting is `go vet` + `go fmt` only** — no `golangci-lint` config for
-  richer static analysis (unused code, shadowing, error-check linting, etc.).
-- **No shell completion shipped.** Cobra auto-adds a `completion` subcommand,
-  but nothing documents it in the README or ships a generated completion
-  script.
-- **README gaps**: no demo screenshot/GIF, no "why this exists" / motivation
-  section, no comparison to alternatives (e.g. `kubectx`, `kubie`), no
-  uninstall instructions.
-- **No `.editorconfig` or `.gitattributes`.**
-- **No code coverage tooling** (codecov config/badge) — moot until tests
-  exist.
-- **No package-level Go doc comments** (`doc.go` or `// Package cmd ...`) —
-  affects how the module renders on pkg.go.dev. Low impact since the only
-  public package (`cmd`) is a CLI wrapper, not a library API most people
-  would import.
-- **LICENSE copyright line** reads `Copyright 2026 tuplle` — the GitHub
-  org/username rather than a legal name; commonly fine for OSS but worth a
-  conscious choice rather than a template default.
+- [ ] Linting is still `go vet` + `go fmt` only — no `golangci-lint` config.
+- [ ] No shell completion shipped/documented (Cobra's built-in `completion`
+  subcommand).
+- [ ] README still has no demo screenshot/GIF, "why this exists" section,
+  comparison to alternatives (`kubectx`, `kubie`), or uninstall
+  instructions.
+- [ ] No `.editorconfig` or `.gitattributes`.
+- [ ] No code coverage tooling (codecov config/badge) — tests now exist, so
+  this is unblocked if wanted.
+- [ ] No package-level Go doc comments (`doc.go`).
+- [ ] LICENSE copyright line still reads `Copyright 2026 tuplle`.
 
 ## Not a gap
 
-`LICENSE.txt` (full genuine Apache 2.0 text), `go.sum` (consistent with
-`go.mod`), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `.gitignore`, and a
-working `Makefile` (`build`/`install`/`lint`/`clean`) are all already in
-good shape.
+`LICENSE.txt`, `go.sum`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`,
+`.gitignore`, and a working `Makefile` were already in good shape.
 
-## Suggested order if/when the user wants to act
+## Security audit — ✅ DONE (found separately, not in original tiers)
 
-1. Add tests + `go test` in CI + `pull_request` trigger (Tier 1) — cheapest,
-   highest confidence payoff.
-2. Cut a first semver tag (e.g. `v0.1.0`) once tests exist, add
-   CHANGELOG.md and SECURITY.md.
-3. Move to Tier 2 (GoReleaser, badges, templates) once the project is ready
-   for outside contributors.
-4. Tier 3 as ongoing polish.
+A follow-up security review (govulncheck + manual review) found and fixed:
+
+- [x] **`~/.kube/config` written with world-readable permissions** —
+  `CopyFile` now writes via `os.CreateTemp` (mode `0600`) instead of
+  `os.Create` (was `0644`).
+- [x] **Non-atomic config write** — `CopyFile` now writes to a temp file in
+  the destination directory, `Sync`s, then `os.Rename`s into place, so an
+  interruption never leaves a partially written `~/.kube/config`.
+- [x] **Symlinks followed without validation** — `GetFilesFromDir` now
+  filters on `entry.Type().IsRegular()` instead of `!entry.IsDir()`, so
+  symlinks in the config directory are excluded rather than followed.
+- [x] **CI actions pinned by mutable tag** — `actions/checkout@v6` and
+  `actions/setup-go@v6` pinned to their resolved commit SHAs.
+- [x] **No explicit CI token permissions** — added
+  `permissions: contents: read` to `build-main.yml`.
+- [x] Dependency vulnerability scan (`govulncheck`) — clean, no known CVEs.
+
+## Suggested order for what's left
+
+1. Tier 2 remainder: CODEOWNERS, Dependabot config, release automation
+   (GoReleaser) once ready for outside contributors/prebuilt binaries.
+2. Tier 3 as ongoing polish.
