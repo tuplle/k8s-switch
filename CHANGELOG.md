@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-21
+
 ### Added
 
 - Cross-platform release pipeline: pushing a `v*` tag now builds
@@ -45,4 +47,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - CI now runs on pull requests in addition to pushes to `main`, and runs the
   test suite before building.
 
+[1.1.0]: https://github.com/tuplle/k8s-switch/releases/tag/v1.1.0
 [1.0.0]: https://github.com/tuplle/k8s-switch/releases/tag/v1.0.0
