@@ -19,15 +19,34 @@ var (
 	keyQuit  = key.NewBinding(key.WithKeys("q", "esc", "ctrl+c"), key.WithHelp("q/esc", "quit"))
 )
 
-// configItem adapts a kubeconfig file name/path pair for display in a bubbles/list.
+// configItem adapts a kubeconfig file for display in a bubbles/list.
 type configItem struct {
-	name string
-	path string
+	name        string
+	description string
 }
 
 func (i configItem) Title() string       { return i.name }
-func (i configItem) Description() string { return i.path }
+func (i configItem) Description() string { return i.description }
 func (i configItem) FilterValue() string { return i.name }
+
+// describeConfig returns a "<context> · <server>" summary of the kubeconfig at path,
+// read via ReadKubeconfigSummary, for display in the picker. It falls back to path
+// itself if the file can't be read/parsed or has no usable cluster/context info, so a
+// single bad file doesn't break browsing the rest of the list.
+func describeConfig(path string) string {
+	summary, err := ReadKubeconfigSummary(path)
+	if err != nil || (summary.ContextName == "" && summary.ServerAddress == "") {
+		return path
+	}
+	switch {
+	case summary.ContextName == "":
+		return summary.ServerAddress
+	case summary.ServerAddress == "":
+		return summary.ContextName
+	default:
+		return summary.ContextName + "  ·  " + summary.ServerAddress
+	}
+}
 
 // selectModel is the Bubble Tea model backing the interactive config picker.
 type selectModel struct {
@@ -39,7 +58,7 @@ func newSelectModel(configs map[string]string) selectModel {
 	names := slices.Sorted(maps.Keys(configs))
 	items := make([]list.Item, len(names))
 	for i, name := range names {
-		items[i] = configItem{name: name, path: configs[name]}
+		items[i] = configItem{name: name, description: describeConfig(configs[name])}
 	}
 
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)

@@ -27,9 +27,18 @@ Module path: `github.com/tuplle/k8s-switch` (Go 1.25).
   selects; `q`/`esc`/`ctrl+c` cancel — handled explicitly in this model's own
   `Update`, not via the list's built-in quit keybindings (disabled via
   `list.DisableQuitKeybindings()`: bubbles v2.2.1's default `Quit` binding is `v`
-  mislabeled "select", which is broken/misleading, so don't re-enable it).
-  `internal.SelectConfig` is the entry point `cmd/root.go` calls.
-  `internal/select_test.go` covers the model directly (no real TTY needed).
+  mislabeled "select", which is broken/misleading, so don't re-enable it). Each
+  item's description is `"<context> · <server>"`, read from the kubeconfig file
+  itself via `describeConfig`/`ReadKubeconfigSummary` (falls back to the file path
+  if the file can't be parsed). `internal.SelectConfig` is the entry point
+  `cmd/root.go` calls. `internal/select_test.go` covers the model directly (no
+  real TTY needed).
+- `internal/kubeconfig.go` — `ReadKubeconfigSummary` parses a kubeconfig YAML file
+  (via `gopkg.in/yaml.v3`) and returns its context name and cluster server address.
+  Assumes exactly one cluster and one context per file (reads only the first entry
+  of each; no merging, `current-context` is not consulted) — this assumption is a
+  deliberate project convention, not a general kubeconfig-parsing library.
+  `internal/kubeconfig_test.go` covers it.
 - `bin/` — build output from `make build` (git-ignored, not source).
 - `.goreleaser.yaml` — cross-platform release config (see "Releases" below).
 - `.github/workflows/build-main.yml` — CI: installs deps, lints, tests, builds on

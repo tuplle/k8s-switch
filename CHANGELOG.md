@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   v2 and `bubbles/list` v2 instead of `promptui`. Keybindings change
   slightly: press `/` to fuzzy-filter by name, and `q`/`esc`/`ctrl+c` (in
   addition to `ctrl+c` alone before) all cancel the selection.
+- The picker now shows each kubeconfig's context name and cluster server
+  address (e.g. `prod-context  ·  https://cluster.example.com:6443`)
+  instead of the file's path, read directly from the YAML. Assumes one
+  cluster and one context per file; falls back to showing the file path if
+  a file can't be parsed.
 
 ## [1.0.0] - 2026-09-20
 

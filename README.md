@@ -63,7 +63,10 @@ k8s-switch
 |:-------------|:----------|:---------------------------------------------------------------------------------------------|
 | `--k9s`      | `-9`      | Launch k9s with the selected configuration                                                   |
 | `--k9s-only` |           | Only launch k9s with the selected configuration. It does not copy the config to .kube/config |
+| `--logs`     |           | Open logs in the default browser with kubetail, using the selected configuration             |
+| `--dir`      | `-d`      | Path to the directory containing kubeconfig files (default `~/.kube/config.d/`)              |
 | `--verbose`  | `-v`      | Enable verbose output                                                                        |
+| `--version`  |           | Show the k8s-switch version                                                                  |
 | `--help`     | `-h`      | Show help message                                                                            |
 
 ### Examples

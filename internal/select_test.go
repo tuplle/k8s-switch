@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
@@ -52,5 +54,36 @@ func TestSelectModelEnterWhileFilteringDoesNotChoose(t *testing.T) {
 
 	if m.chosen != "" {
 		t.Errorf("expected no choice from confirming a filter, got %q", m.chosen)
+	}
+}
+
+func TestDescribeConfigShowsContextAndServer(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	content := `
+clusters:
+  - name: my-cluster
+    cluster:
+      server: https://cluster.example.com:6443
+contexts:
+  - name: my-context
+    context:
+      cluster: my-cluster
+      user: my-user
+`
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		t.Fatalf("failed to write fixture file: %v", err)
+	}
+
+	want := "my-context  ·  https://cluster.example.com:6443"
+	if got := describeConfig(path); got != want {
+		t.Errorf("expected description %q, got %q", want, got)
+	}
+}
+
+func TestDescribeConfigFallsBackToPathOnError(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "does-not-exist.yaml")
+
+	if got := describeConfig(path); got != path {
+		t.Errorf("expected fallback to path %q, got %q", path, got)
 	}
 }
