@@ -1,14 +1,19 @@
 BINARY_NAME=k8s-switch
 BUILD_DIR=bin
 
-.PHONY: all install-deps build clean
+.PHONY: all install-deps build clean test
 
-all: clean install-deps build
+all: clean install-deps test build
 
 ## install-deps: Get dependencies
 install-deps:
 	@echo "Installing dependencies"
 	@go get -u .
+
+## test: Run the test suite
+test:
+	@echo "Testing"
+	@go test ./...
 
 ## build: Build the binary
 build:

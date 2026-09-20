@@ -2,6 +2,8 @@ name: Build Main
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -16,5 +18,7 @@ jobs:
         run: make install-deps
       - name: Lint
         run: make lint
+      - name: Test
+        run: make test
       - name: Build
-        run: make
+        run: make build

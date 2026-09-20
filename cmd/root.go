@@ -17,10 +17,14 @@ import (
 
 var verbose bool
 
+// Version is the released version of k8s-switch, set to match the git tag at release time.
+const Version = "1.0.0"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "k8s-switch",
-	Short: "Quickly switch between Kubernetes configurations",
+	Use:     "k8s-switch",
+	Version: Version,
+	Short:   "Quickly switch between Kubernetes configurations",
 	Long: `k8s-switch is a CLI tool that helps you manage multiple kubeconfig files.
 It lists files from your ~/.kube/conf.d directory, allows you to select one
 via an interactive prompt, and automatically updates your main ~/.kube/config.
@@ -42,13 +46,7 @@ Optionally, it can open logs in default browser with kubetail.`,
 			panic(err)
 		}
 
-		filteredConfigs := make(map[string]string)
-		for name, path := range configs {
-			if filepath.Ext(name) == ".yaml" {
-				filteredConfigs[name] = path
-			}
-		}
-		configs = filteredConfigs
+		configs = internal.FilterByExtension(configs, ".yaml")
 
 		prompt := promptui.Select{
 			Label: "Select config",

@@ -30,6 +30,17 @@ func GetFilesFromDir(dirPath string) (map[string]string, error) {
 	return files, nil
 }
 
+// FilterByExtension returns the subset of files whose name has the given extension (e.g. ".yaml").
+func FilterByExtension(files map[string]string, ext string) map[string]string {
+	filtered := make(map[string]string)
+	for name, path := range files {
+		if filepath.Ext(name) == ext {
+			filtered[name] = path
+		}
+	}
+	return filtered
+}
+
 // CopyFile copies the contents of the source file to the destination file.
 // It returns an error if the source file cannot be opened, the destination file cannot be created, or the copy operation fails.
 func CopyFile(src, dst string) error {
