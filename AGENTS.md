@@ -6,20 +6,30 @@ Guidance for AI coding agents working in this repository.
 
 `k8s-switch` is a small Go CLI tool that lets a user interactively switch between
 multiple kubeconfig files. It lists YAML files from `~/.kube/config.d/`, prompts the
-user to pick one (via `promptui`), copies the selection over `~/.kube/config`, and
-can optionally launch `k9s` or `kubetail` with that config.
+user to pick one via a Bubble Tea / bubbles-list picker, copies the selection over
+`~/.kube/config`, and can optionally launch `k9s` or `kubetail` with that config.
 
 Module path: `github.com/tuplle/k8s-switch` (Go 1.25).
 
 ## Layout
 
 - `main.go` — entry point, delegates to `cmd.Execute()`.
-- `cmd/root.go` — the single Cobra root command: flag definitions, the interactive
-  selection flow, and thin wrappers (`runK9s`, `runKubetail`) that shell out to
-  external TUIs. `cmd/root_test.go` covers it.
+- `cmd/root.go` — the single Cobra root command: flag definitions, orchestration, and
+  thin wrappers (`runK9s`, `runKubetail`) that shell out to external TUIs.
+  `cmd/root_test.go` covers it. `cmd/` holds only Cobra command wiring — non-Cobra
+  logic (including TUI components) lives in `internal/`, even logic that's only
+  used interactively; see `internal/select.go` below.
 - `internal/utils.go` — small, dependency-free helpers (`GetFilesFromDir`,
   `FilterByExtension`, `CopyFile`, `RunAnotherTUI`) shared by `cmd`.
   `internal/utils_test.go` covers it.
+- `internal/select.go` — the interactive config picker: a Bubble Tea model
+  (`charm.land/bubbletea/v2`) wrapping a `charm.land/bubbles/v2/list`. `enter`
+  selects; `q`/`esc`/`ctrl+c` cancel — handled explicitly in this model's own
+  `Update`, not via the list's built-in quit keybindings (disabled via
+  `list.DisableQuitKeybindings()`: bubbles v2.2.1's default `Quit` binding is `v`
+  mislabeled "select", which is broken/misleading, so don't re-enable it).
+  `internal.SelectConfig` is the entry point `cmd/root.go` calls.
+  `internal/select_test.go` covers the model directly (no real TTY needed).
 - `bin/` — build output from `make build` (git-ignored, not source).
 - `.goreleaser.yaml` — cross-platform release config (see "Releases" below).
 - `.github/workflows/build-main.yml` — CI: installs deps, lints, tests, builds on
@@ -53,8 +63,10 @@ fail the build otherwise.
 
 ## Conventions
 
-- Keep `cmd/` focused on CLI wiring (flags, prompts, orchestration) and put reusable,
-  side-effecting logic in `internal/`. `internal/utils.go` functions are small and
+- `cmd/` contains only Cobra command definitions and wiring (flags, `Run` orchestration).
+  Everything else — helpers, side-effecting logic, and TUI components (prompts,
+  Bubble Tea models) — belongs in `internal/`, even when only used interactively from
+  one command. `internal/utils.go`/`internal/select.go` functions are small and
   single-purpose — follow that pattern rather than growing one large helper file.
 - Exported functions in `internal/` use Go doc comments starting with the function
   name (see `GetFilesFromDir`, `CopyFile`, `RunAnotherTUI`); match that style for new

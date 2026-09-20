@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"maps"
 	"os"
 	"os/signal"
 	"path/filepath"
-	"slices"
 	"syscall"
 
-	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/tuplle/k8s-switch/internal"
 )
@@ -50,18 +46,13 @@ Optionally, it can open logs in default browser with kubetail.`,
 
 		configs = internal.FilterByExtension(configs, ".yaml")
 
-		prompt := promptui.Select{
-			Label: "Select config",
-			Items: slices.Sorted(maps.Keys(configs)),
-			Size:  10,
-		}
-		_, result, err := prompt.Run()
+		result, ok, err := internal.SelectConfig(configs)
 		if err != nil {
-			if errors.Is(err, promptui.ErrInterrupt) {
-				fmt.Println("Selection cancelled")
-				return
-			}
 			panic(err)
+		}
+		if !ok {
+			fmt.Println("Selection cancelled")
+			return
 		}
 
 		if !k9sOnly {

@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `--version` now reports the exact released version on GoReleaser-built
   binaries (injected at build time); local `make build` reports `dev`.
 
+### Changed
+
+- The interactive config picker now uses [Bubble Tea](https://github.com/charmbracelet/bubbletea)
+  v2 and `bubbles/list` v2 instead of `promptui`. Keybindings change
+  slightly: press `/` to fuzzy-filter by name, and `q`/`esc`/`ctrl+c` (in
+  addition to `ctrl+c` alone before) all cancel the selection.
+
 ## [1.0.0] - 2026-09-20
 
 ### Added

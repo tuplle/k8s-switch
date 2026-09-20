@@ -13,7 +13,7 @@ launch [k9s](https://k9scli.io/).
 - 📂 **Interactive Selection**: List and select kubeconfigs from your `~/.kube/config.d/` directory.
 - 🔄 **Auto-Update**: Automatically overwrites your active `~/.kube/config` with the selected file.
 - 🐕 **k9s Integration**: Launch k9s immediately using your newly selected configuration.
-- ⚡ **Fast & Simple**: Built with Go, Cobra, and Promptui for a smooth terminal experience.
+- ⚡ **Fast & Simple**: Built with Go, Cobra, and Bubble Tea for a smooth terminal experience.
 
 ## Installation
 
