@@ -35,6 +35,21 @@ archives:
       - LICENSE.txt
       - CHANGELOG.md
 
+nfpms:
+  - id: k8s-switch
+    package_name: k8s-switch
+    homepage: https://github.com/tuplle/k8s-switch
+    description: >-
+      A lightweight CLI tool to quickly switch between multiple Kubernetes
+      configurations.
+    maintainer: Milan Mladoniczky <6153201+tuplle@users.noreply.github.com>
+    license: Apache-2.0
+    section: utils
+    bindir: /usr/bin
+    formats:
+      - rpm
+      - deb
+
 checksum:
   name_template: "checksums.txt"
 

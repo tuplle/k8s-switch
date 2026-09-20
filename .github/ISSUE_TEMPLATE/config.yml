@@ -2,4 +2,4 @@ blank_issues_enabled: true
 contact_links:
   - name: Contributing guide
     url: https://github.com/tuplle/k8s-switch/blob/main/CONTRIBUTING.md
-    about: Read how to contribute before opening an issue or PR.
+    about: Read how to report bugs and request features before opening an issue.

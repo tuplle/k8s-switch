@@ -1,7 +1,6 @@
 # Contributing to k8s-switch
 
-First off, thank you for considering contributing to `k8s-switch`! It's people like you who make open-source tools
-better for everyone.
+Thanks for your interest in `k8s-switch`! Bug reports and feature requests are welcome and genuinely helpful.
 
 ## Code of Conduct
 
@@ -22,43 +21,7 @@ understand the expectations for our community.
 
 ### Pull Requests
 
-1. Fork the repository.
-2. Create a new branch for your feature or fix (`git checkout -b feature/amazing-feature`).
-3. Make your changes.
-4. Ensure your code follows Go best practices and is formatted (`go fmt ./...`).
-5. Commit your changes (`git commit -m 'Add some amazing feature'`).
-6. Push to the branch (`git push origin feature/amazing-feature`).
-7. Open a Pull Request.
+`k8s-switch` is solo-maintained and isn't currently accepting pull requests. If you'd like to see a change made,
+please open an issue describing it instead of submitting a PR — unsolicited PRs may not be reviewed or merged.
 
-## Development Setup
-
-### Prerequisites
-
-- Go 1.25 or later.
-- `make` installed on your system.
-
-### Building Locally
-
-Use the provided `Makefile` to build and test your changes:
-
-```bash
-# Build the binary into the bin/ directory
-make build
-
-# Install your modified version locally to test
-make install
-```
-
-## Project Structure
-
-- `main.go`: Entry point of the application.
-- `cmd/`: Contains Cobra command definitions and primary logic.
-- `internal/`: Shared utility functions and internal logic.
-
-## Style Guide
-
-- Follow standard Go conventions.
-- Use meaningful variable and function names.
-- Keep functions small and focused on a single task.
-
-Thank you for your contributions!
+Thanks for helping make k8s-switch better!

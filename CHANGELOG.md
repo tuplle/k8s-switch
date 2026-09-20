@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   prebuilt binary without a Go toolchain.
 - `--version` now reports the exact released version on GoReleaser-built
   binaries (injected at build time); local `make build` reports `dev`.
+- `.rpm`/`.deb` packages (amd64/arm64) are now built and attached to each
+  GitHub Release alongside the archives, for local `dnf install ./*.rpm` /
+  `apt install ./*.deb` installs (not yet published to a hosted repo).
 
 ### Changed
 

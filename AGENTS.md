@@ -97,7 +97,12 @@ GoReleaser injects the real version at build time via `-ldflags -X` (see
 maintainer, not performed automatically). Pushing the tag triggers
 `.github/workflows/release.yml`, which runs GoReleaser to cross-compile for
 linux/darwin/windows (amd64+arm64) and publish archives + checksums to GitHub
-Releases.
+Releases. GoReleaser's `nfpms` section (via the bundled, pure-Go `nfpm` — no
+`rpmbuild`/mock needed) also builds `.rpm`/`.deb` packages for the linux
+builds and attaches them as release assets. These aren't published to a
+hosted dnf/apt repo (no Copr/PPA yet) — installing them is a local
+`dnf install ./*.rpm` / `apt install ./*.deb`, not a `dnf install k8s-switch`
+by name.
 
 To test the release pipeline locally without tagging or publishing:
 `make snapshot` (requires `goreleaser` installed:

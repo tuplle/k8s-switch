@@ -23,6 +23,24 @@ Download the archive for your OS/architecture from the
 [Releases page](https://github.com/tuplle/k8s-switch/releases), extract it,
 and put the `k8s-switch` binary on your `PATH`. No Go toolchain required.
 
+### Linux Packages (rpm/deb)
+
+Each release also includes `.rpm` and `.deb` packages for amd64/arm64.
+Download the one for your architecture from the
+[Releases page](https://github.com/tuplle/k8s-switch/releases) and install
+it locally:
+
+```bash
+# Fedora/RHEL/openSUSE
+sudo dnf install ./k8s-switch_<version>_linux_amd64.rpm
+
+# Debian/Ubuntu
+sudo apt install ./k8s-switch_<version>_linux_amd64.deb
+```
+
+These aren't hosted in a repository yet, so `dnf`/`apt` won't discover
+updates automatically — re-download and reinstall for new versions.
+
 ### From Source
 
 Ensure you have Go installed (version 1.25 or later).
